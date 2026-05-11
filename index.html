@@ -3,11 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>قائمة طعام - مطعم الريان للوجبات والأطباق البحرية </title>
+    <title>قائمة طعام - مطعم الريان للوجبات والأطباق البحرية</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
-        body { background: #f8f8f8; padding-bottom: 80px; }
+        body { background: #f8f8f8; padding-bottom: 140px; } /* زيادة المسافة السفلية لتجنب تغطية السلة */
         .header { background: #2c3e50; color: white; padding: 20px; text-align: center; font-size: 24px; font-weight: bold; }
+
+        /* معلومات المطعم */
+        .restaurant-info {
+            background: #34495e;
+            color: #ecf0f1;
+            padding: 15px 20px;
+            text-align: center;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+        .restaurant-info a {
+            color: #f1c40f;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .restaurant-info a:hover { text-decoration: underline; }
+
         .container { max-width: 800px; margin: auto; padding: 20px; }
 
         /* حقل اسم العميل */
@@ -83,7 +100,14 @@
     </style>
 </head>
 <body>
-    <div class="header">🍽️ قائمة طعام - مطعم الريان للوجبات والأطباق البحرية </div>
+    <div class="header">🍽️ قائمة طعام - مطعم الريان للوجبات والأطباق البحرية</div>
+    
+    <!-- معلومات المطعم الجديدة -->
+    <div class="restaurant-info">
+        <p>📍 العنوان: عدن، كريتر، الميدان، امام فرزة الشيخ عثمان</p>
+        <p>📞 تلفون: 256756 - 256757 - 291310 &nbsp;&nbsp;|&nbsp;&nbsp; 📱 جوال: 771256757</p>
+        <p>🗺️ <a href="https://maps.app.goo.gl/TP98oWBsyjVr5RPp9" target="_blank">اضغط هنا لفتح الموقع على الخريطة</a></p>
+    </div>
 
     <div class="container">
         <!-- حقل اسم العميل -->
@@ -101,7 +125,7 @@
         <div class="cart-info" id="cart-toggle">
             <div style="display: flex; flex-direction: column; gap: 5px;">
                 <span>🛒 السلة: <span class="cart-count" id="cart-count">0</span></span>
-                <span class="cart-total" id="cart-total">0.00 ر.س</span>
+                <span class="cart-total" id="cart-total">0.00 ر.ي</span>
             </div>
         </div>
         <div style="display: flex; align-items: center; gap: 8px;">
@@ -117,12 +141,12 @@
             <span class="close" id="close-modal">&times;</span>
             <h2>🛒 سلة الطلبات</h2>
             <div id="cart-items-list"></div>
-            <div class="cart-total-modal">الإجمالي: <span id="modal-total">0.00</span> ر.س</div>
+            <div class="cart-total-modal">الإجمالي: <span id="modal-total">0.00</span> ر.ي</div>
         </div>
     </div>
 
     <script>
-        const restaurantPhone = "967735168698"; // ⚠️ استبدل برقم مطعمك
+        const restaurantPhone = "967735168698"; // ⚠️ استبدل برقم مطعمك (دولي)
         let menuCategories = [];
         let activeTabIndex = 0;
         let cart = JSON.parse(localStorage.getItem('restaurantCart')) || [];
@@ -175,7 +199,7 @@
                     <div class="item-info">
                         <h3>${item.name}</h3>
                         <p class="desc">${item.desc}</p>
-                        <p class="price">${item.price} ر.س</p>
+                        <p class="price">${item.price} ر.ي</p>
                         <button class="add-btn" data-id="${item.id}">➕ أضف للسلة</button>
                     </div>
                 `;
@@ -220,7 +244,7 @@
             const count = cart.reduce((sum, item) => sum + item.qty, 0);
             const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
             document.getElementById('cart-count').textContent = count;
-            document.getElementById('cart-total').textContent = total.toFixed(2) + ' ر.س';
+            document.getElementById('cart-total').textContent = total.toFixed(2) + ' ر.ي';
         }
 
         // فتح نافذة السلة
@@ -237,7 +261,7 @@
                 div.innerHTML = `
                     <div class="cart-item-info">
                         <div class="cart-item-name">${item.name}</div>
-                        <div class="cart-item-price">${item.price} ر.س للواحدة</div>
+                        <div class="cart-item-price">${item.price} ر.ي للواحدة</div>
                     </div>
                     <div class="cart-item-controls">
                         <button class="qty-btn" data-action="minus" data-index="${idx}">−</button>
@@ -260,7 +284,6 @@
                         if (cart[index].qty > 1) {
                             cart[index].qty -= 1;
                         } else {
-                            // إزالة الصنف إذا وصلت الكمية للصفر
                             cart.splice(index, 1);
                         }
                     }
@@ -276,7 +299,7 @@
                     cart.splice(index, 1);
                     saveCart();
                     updateCartUI();
-                    openCartModal(); // إعادة رسم النافذة
+                    openCartModal();
                 });
             });
 
@@ -320,10 +343,10 @@
             let total = 0;
             cart.forEach(item => {
                 const sub = item.price * item.qty;
-                message += `• *${item.name}* (${item.qty} × ${item.price}) = ${sub} ر.س%0A`;
+                message += `• *${item.name}* (${item.qty} × ${item.price}) = ${sub} ر.ي%0A`;
                 total += sub;
             });
-            message += `%0A*الإجمالي النهائي: ${total.toFixed(2)} ر.س*%0A`;
+            message += `%0A*الإجمالي النهائي: ${total.toFixed(2)} ر.ي*%0A`;
             message += `---%0Aالرجاء تأكيد الطلب وإرسال العنوان.`;
 
             window.open(`https://wa.me/${restaurantPhone}?text=${message}`, '_blank');
