@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قائمة طعام - مطعم الريان للوجبات والأطباق البحرية </title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background: #f8f8f8; padding-bottom: 80px; }
+        .header { background: #2c3e50; color: white; padding: 20px; text-align: center; font-size: 24px; font-weight: bold; }
+        .container { max-width: 800px; margin: auto; padding: 20px; }
+
+        /* حقل اسم العميل */
+        #customer-name {
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        /* شريط التبويبات */
+        .tab-nav {
+            display: flex; overflow-x: auto; white-space: nowrap;
+            -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;
+            border-bottom: 2px solid #ddd; margin-bottom: 20px;
+        }
+        .tab-nav::-webkit-scrollbar { display: none; }
+        .tab-btn {
+            flex: 0 0 auto; padding: 12px 25px; background: transparent;
+            border: none; font-size: 18px; font-weight: bold; color: #666;
+            cursor: pointer; transition: color 0.3s, border-bottom 0.3s;
+            border-bottom: 3px solid transparent; margin-bottom: -2px;
+        }
+        .tab-btn:hover { color: #e67e22; }
+        .tab-btn.active { color: #e67e22; border-bottom: 3px solid #e67e22; }
+
+        /* شبكة الأصناف */
+        .menu-grid { display: flex; flex-wrap: wrap; gap: 15px; }
+
+        .item { background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: calc(33.333% - 10px); overflow: hidden; transition: transform 0.2s; }
+        .item:hover { transform: translateY(-3px); }
+        .item img { width: 100%; height: 180px; object-fit: cover; }
+        .item-info { padding: 12px; }
+        .item h3 { font-size: 16px; margin-bottom: 4px; color: #2c3e50; }
+        .item p.desc { font-size: 12px; color: #666; margin-bottom: 8px; }
+        .price { font-weight: bold; color: #e67e22; font-size: 15px; margin-bottom: 8px; }
+        .add-btn { background: #27ae60; color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; font-size: 15px; cursor: pointer; transition: background 0.3s; }
+        .add-btn:hover { background: #219a52; }
+
+        /* السلة السفلية */
+        .cart { position: fixed; bottom: 0; left: 0; right: 0; background: white; box-shadow: 0 -2px 12px rgba(0,0,0,0.15); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 999; flex-wrap: wrap; }
+        .cart-info { display: flex; align-items: center; gap: 15px; cursor: pointer; }
+        .cart-count { background: #e67e22; color: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .cart-total { font-weight: bold; font-size: 18px; }
+        .checkout-btn { background: #25D366; color: white; border: none; padding: 15px 30px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .checkout-btn:hover { background: #1ebc59; }
+        #clear-cart { background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; }
+        #view-cart { background: #3498db; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; margin-right: 5px; }
+
+        /* نافذة السلة المنبثقة */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
+        .modal-content { background-color: #fefefe; margin: 10% auto; padding: 20px; border-radius: 12px; width: 90%; max-width: 500px; position: relative; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        .close { position: absolute; left: 15px; top: 10px; color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .close:hover { color: black; }
+        .modal h2 { text-align: center; color: #2c3e50; margin-bottom: 15px; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .cart-item-info { flex: 2; }
+        .cart-item-name { font-weight: bold; font-size: 16px; }
+        .cart-item-price { font-size: 14px; color: #e67e22; }
+        .cart-item-controls { display: flex; align-items: center; gap: 8px; }
+        .qty-btn { background: #ecf0f1; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 18px; font-weight: bold; color: #2c3e50; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .qty-btn:hover { background: #d5dbdb; }
+        .qty-num { font-weight: bold; min-width: 20px; text-align: center; }
+        .delete-btn { background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 14px; }
+        .delete-btn:hover { background: #c0392b; }
+        .cart-total-modal { font-size: 20px; font-weight: bold; text-align: left; margin: 15px 0; color: #2c3e50; }
+        .empty-cart { text-align: center; color: #999; padding: 20px; }
+
+        @media (max-width: 600px) {
+            .item { width: 100%; }
+            .cart { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .tab-btn { font-size: 16px; padding: 10px 18px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">🍽️ قائمة طعام - مطعم الريان للوجبات والأطباق البحرية </div>
+
+    <div class="container">
+        <!-- حقل اسم العميل -->
+        <input type="text" id="customer-name" placeholder="أدخل اسمك الكريم...">
+
+        <!-- شريط التبويبات -->
+        <div class="tab-nav" id="tab-nav"></div>
+
+        <!-- محتوى التبويب النشط -->
+        <div id="menu-container"></div>
+    </div>
+
+    <!-- الشريط السفلي للسلة -->
+    <div class="cart" id="cart-bar">
+        <div class="cart-info" id="cart-toggle">
+            <div style="display: flex; flex-direction: column; gap: 5px;">
+                <span>🛒 السلة: <span class="cart-count" id="cart-count">0</span></span>
+                <span class="cart-total" id="cart-total">0.00 ر.س</span>
+            </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <button id="view-cart">📋 عرض السلة</button>
+            <button id="clear-cart">🗑️ تفريغ</button>
+            <button class="checkout-btn" id="checkout-btn">💬 أرسل الطلب</button>
+        </div>
+    </div>
+
+    <!-- نافذة السلة المنبثقة -->
+    <div id="cart-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="close-modal">&times;</span>
+            <h2>🛒 سلة الطلبات</h2>
+            <div id="cart-items-list"></div>
+            <div class="cart-total-modal">الإجمالي: <span id="modal-total">0.00</span> ر.س</div>
+        </div>
+    </div>
+
+    <script>
+        const restaurantPhone = "967735168698"; // ⚠️ استبدل برقم مطعمك
+        let menuCategories = [];
+        let activeTabIndex = 0;
+        let cart = JSON.parse(localStorage.getItem('restaurantCart')) || [];
+
+        // جلب البيانات
+        fetch('menu.json')
+            .then(response => response.json())
+            .then(data => {
+                menuCategories = data;
+                buildTabs(menuCategories);
+                openTab(0);
+                updateCartUI();
+            })
+            .catch(error => {
+                document.getElementById('menu-container').innerHTML = '<p style="text-align:center;color:red;">عذراً، تعذر تحميل القائمة.</p>';
+            });
+
+        // بناء التبويبات
+        function buildTabs(categories) {
+            const tabNav = document.getElementById('tab-nav');
+            tabNav.innerHTML = '';
+            categories.forEach((cat, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'tab-btn';
+                btn.textContent = cat.category;
+                btn.addEventListener('click', () => openTab(index));
+                tabNav.appendChild(btn);
+            });
+        }
+
+        function openTab(index) {
+            activeTabIndex = index;
+            const btns = document.querySelectorAll('.tab-btn');
+            btns.forEach((b, i) => b.classList.toggle('active', i === index));
+            const category = menuCategories[index];
+            renderItems(category);
+        }
+
+        function renderItems(category) {
+            const container = document.getElementById('menu-container');
+            container.innerHTML = '';
+            const grid = document.createElement('div');
+            grid.className = 'menu-grid';
+
+            category.items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'item';
+                div.innerHTML = `
+                    <img src="${item.img}" alt="${item.name}">
+                    <div class="item-info">
+                        <h3>${item.name}</h3>
+                        <p class="desc">${item.desc}</p>
+                        <p class="price">${item.price} ر.س</p>
+                        <button class="add-btn" data-id="${item.id}">➕ أضف للسلة</button>
+                    </div>
+                `;
+                grid.appendChild(div);
+            });
+            container.appendChild(grid);
+
+            document.querySelectorAll('.add-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    addToCart(id, this);
+                });
+            });
+        }
+
+        function addToCart(id, btnElement) {
+            const product = findProductById(id);
+            if (!product) return;
+
+            const existing = cart.find(item => item.id === id);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.push({ id: product.id, name: product.name, price: product.price, qty: 1 });
+            }
+
+            if (btnElement) {
+                const originalText = btnElement.innerHTML;
+                btnElement.innerHTML = "✅ تمت الإضافة";
+                btnElement.style.background = "#2ecc71";
+                setTimeout(() => {
+                    btnElement.innerHTML = originalText;
+                    btnElement.style.background = "#27ae60";
+                }, 800);
+            }
+
+            saveCart();
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const count = cart.reduce((sum, item) => sum + item.qty, 0);
+            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            document.getElementById('cart-count').textContent = count;
+            document.getElementById('cart-total').textContent = total.toFixed(2) + ' ر.س';
+        }
+
+        // فتح نافذة السلة
+        function openCartModal() {
+            if (cart.length === 0) {
+                alert('السلة فارغة');
+                return;
+            }
+            const listDiv = document.getElementById('cart-items-list');
+            listDiv.innerHTML = '';
+            cart.forEach((item, idx) => {
+                const div = document.createElement('div');
+                div.className = 'cart-item';
+                div.innerHTML = `
+                    <div class="cart-item-info">
+                        <div class="cart-item-name">${item.name}</div>
+                        <div class="cart-item-price">${item.price} ر.س للواحدة</div>
+                    </div>
+                    <div class="cart-item-controls">
+                        <button class="qty-btn" data-action="minus" data-index="${idx}">−</button>
+                        <span class="qty-num">${item.qty}</span>
+                        <button class="qty-btn" data-action="plus" data-index="${idx}">+</button>
+                        <button class="delete-btn" data-index="${idx}">🗑️</button>
+                    </div>
+                `;
+                listDiv.appendChild(div);
+            });
+
+            // ربط الأحداث داخل النافذة
+            listDiv.querySelectorAll('.qty-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    const action = this.getAttribute('data-action');
+                    if (action === 'plus') {
+                        cart[index].qty += 1;
+                    } else if (action === 'minus') {
+                        if (cart[index].qty > 1) {
+                            cart[index].qty -= 1;
+                        } else {
+                            // إزالة الصنف إذا وصلت الكمية للصفر
+                            cart.splice(index, 1);
+                        }
+                    }
+                    saveCart();
+                    updateCartUI();
+                    openCartModal(); // إعادة رسم النافذة
+                });
+            });
+
+            listDiv.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    cart.splice(index, 1);
+                    saveCart();
+                    updateCartUI();
+                    openCartModal(); // إعادة رسم النافذة
+                });
+            });
+
+            document.getElementById('modal-total').textContent = 
+                cart.reduce((sum, item) => sum + (item.price * item.qty), 0).toFixed(2);
+
+            document.getElementById('cart-modal').style.display = 'block';
+        }
+
+        function closeCartModal() {
+            document.getElementById('cart-modal').style.display = 'none';
+        }
+
+        // أحداث النوافذ والأزرار
+        document.getElementById('view-cart').addEventListener('click', openCartModal);
+        document.getElementById('cart-toggle').addEventListener('click', openCartModal);
+        document.getElementById('close-modal').addEventListener('click', closeCartModal);
+        window.addEventListener('click', function(event) {
+            if (event.target == document.getElementById('cart-modal')) {
+                closeCartModal();
+            }
+        });
+
+        // تفريغ السلة
+        document.getElementById('clear-cart').addEventListener('click', () => {
+            if (confirm('هل تريد مسح جميع الأصناف من السلة؟')) {
+                cart = [];
+                saveCart();
+                updateCartUI();
+                closeCartModal();
+            }
+        });
+
+        // إرسال الطلب
+        document.getElementById('checkout-btn').addEventListener('click', function() {
+            const customerName = document.getElementById('customer-name').value.trim();
+            if (!customerName) { alert('فضلاً أدخل اسمك قبل إرسال الطلب'); return; }
+            if (cart.length === 0) { alert('السلة فارغة!'); return; }
+
+            let message = `*طلب جديد من: ${customerName}*%0A%0A`;
+            let total = 0;
+            cart.forEach(item => {
+                const sub = item.price * item.qty;
+                message += `• *${item.name}* (${item.qty} × ${item.price}) = ${sub} ر.س%0A`;
+                total += sub;
+            });
+            message += `%0A*الإجمالي النهائي: ${total.toFixed(2)} ر.س*%0A`;
+            message += `---%0Aالرجاء تأكيد الطلب وإرسال العنوان.`;
+
+            window.open(`https://wa.me/${restaurantPhone}?text=${message}`, '_blank');
+        });
+
+        function saveCart() { localStorage.setItem('restaurantCart', JSON.stringify(cart)); }
+
+        function findProductById(id) {
+            for (let cat of menuCategories) {
+                const found = cat.items.find(p => p.id === id);
+                if (found) return found;
+            }
+            return null;
+        }
+    </script>
+</body>
+</html>
