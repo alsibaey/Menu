@@ -6,29 +6,37 @@
     <title>قائمة طعام - مطعم الريان للوجبات والأطباق البحرية</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
-        body { background: #f8f8f8; padding-bottom: 110px; } /* مسافة كافية للسلة المصغرة */
+        body { background: #f8f8f8; padding-bottom: 110px; }
 
         .header { background: #2c3e50; color: white; padding: 20px; text-align: center; font-size: 24px; font-weight: bold; }
 
-        /* شريط المعلومات المتحرك */
+        /* شريط المعلومات مع أيقونة الخريطة */
         .restaurant-info {
             background: #34495e;
             color: #ecf0f1;
-            padding: 8px 0;
+            padding: 8px 10px;
             font-size: 14px;
+            display: flex;
+            align-items: center;
             overflow: hidden;
-            white-space: nowrap;
         }
+        .map-icon {
+            font-size: 28px;
+            margin-left: 10px;
+            text-decoration: none;
+            transition: transform 0.2s;
+            flex-shrink: 0;
+        }
+        .map-icon:hover { transform: scale(1.2); }
         .restaurant-info marquee {
-            display: inline-block;
-            padding: 0 20px;
+            flex: 1;
+            white-space: nowrap;
         }
         .restaurant-info a {
             color: #f1c40f;
             text-decoration: none;
             font-weight: bold;
         }
-        .restaurant-info a:hover { text-decoration: underline; }
 
         .container { max-width: 800px; margin: auto; padding: 20px; }
 
@@ -64,7 +72,7 @@
         .add-btn { background: #27ae60; color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; font-size: 15px; cursor: pointer; transition: background 0.3s; }
         .add-btn:hover { background: #219a52; }
 
-        /* السلة السفلية (مصغرة) */
+        /* السلة السفلية المصغرة */
         .cart {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: white; box-shadow: 0 -2px 12px rgba(0,0,0,0.15);
@@ -114,19 +122,21 @@
             .item { width: 100%; }
             .cart { flex-direction: column; align-items: flex-start; gap: 8px; }
             .tab-btn { font-size: 15px; padding: 8px 16px; }
+            .restaurant-info { font-size: 12px; }
+            .map-icon { font-size: 24px; }
         }
     </style>
 </head>
 <body>
     <div class="header">🍽️ قائمة طعام - مطعم الريان للوجبات والأطباق البحرية</div>
 
-    <!-- شريط المعلومات المتحرك -->
+    <!-- شريط المعلومات مع أيقونة الخريطة -->
     <div class="restaurant-info">
+        <a href="https://maps.app.goo.gl/TP98oWBsyjVr5RPp9" target="_blank" class="map-icon" title="موقع المطعم على الخريطة">🗺️</a>
         <marquee behavior="scroll" direction="right" scrollamount="5">
             📍 العنوان: عدن، كريتر، الميدان، امام فرزة الشيخ عثمان &nbsp;&nbsp;|&nbsp;&nbsp;
             📞 تلفون: 256756 - 256757 - 291310 &nbsp;&nbsp;|&nbsp;&nbsp;
-            📱 جوال: 771256757 &nbsp;&nbsp;|&nbsp;&nbsp;
-            🗺️ <a href="https://maps.app.goo.gl/TP98oWBsyjVr5RPp9" target="_blank">الموقع على الخريطة</a>
+            📱 جوال: 771256757
         </marquee>
     </div>
 
@@ -137,7 +147,7 @@
         <div id="menu-container"></div>
     </div>
 
-    <!-- الشريط السفلي المصغر -->
+    <!-- الشريط السفلي للسلة -->
     <div class="cart" id="cart-bar">
         <div class="cart-info" id="cart-toggle">
             <div style="display: flex; flex-direction: column; gap: 2px;">
@@ -152,7 +162,7 @@
         </div>
     </div>
 
-    <!-- نافذة السلة المنبثقة -->
+    <!-- نافذة السلة -->
     <div id="cart-modal" class="modal">
         <div class="modal-content">
             <span class="close" id="close-modal">&times;</span>
