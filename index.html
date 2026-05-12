@@ -22,25 +22,42 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
         body { background: var(--bg-soft); padding-bottom: 120px; color: var(--text-dark); overflow-x: hidden; }
 
-        /* --- Header --- */
+        /* --- Header (الترويسة الإبداعية) --- */
         .header { 
+            position: relative;
             background: linear-gradient(135deg, var(--primary-navy) 0%, var(--primary-light) 100%);
-            color: var(--card-white); padding: 40px 20px; text-align: center; 
+            color: var(--card-white); 
+            padding: 40px 20px 80px; /* زيادة المساحة السفلية لبروز الشعار */
+            text-align: center; 
             box-shadow: 0 10px 30px rgba(14, 26, 53, 0.2);
-            border-bottom-left-radius: 40px; border-bottom-right-radius: 40px;
+            border-bottom-left-radius: 50px; border-bottom-right-radius: 50px;
+            margin-bottom: 80px; /* مساحة فارغة تحت الترويسة لاستيعاب الشعار العائم */
         }
+        
+        .header h1 { font-size: 26px; font-weight: 900; color: var(--card-white); text-shadow: 2px 2px 5px rgba(0,0,0,0.4); margin-bottom: 5px;}
+        .header p.subtitle { color: var(--gold-light); font-size: 15px; font-weight: 700; letter-spacing: 1px; }
+
+        /* --- Logo (الشعار العائم ذو التوهج الذهبي) --- */
         .main-logo {
-            width: 130px; height: auto; border-radius: 15px; margin-bottom: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.4); border: 2px solid var(--gold-shine);
-            transition: transform 0.3s;
+            position: absolute;
+            bottom: -65px; /* يسحب الشعار للأسفل ليتقاطع مع الحدود */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px; height: 140px; 
+            border-radius: 50%; /* شعار دائري احترافي */
+            object-fit: cover;
+            background: var(--card-white);
+            border: 5px solid var(--card-white);
+            box-shadow: 0 12px 35px rgba(197, 160, 42, 0.4); /* توهج ذهبي */
+            z-index: 10;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .main-logo:hover { transform: scale(1.05); }
-        .header h1 { font-size: 24px; font-weight: 900; color: var(--gold-light); text-shadow: 1px 1px 3px rgba(0,0,0,0.3); }
+        .main-logo:hover { transform: translateX(-50%) scale(1.08); box-shadow: 0 15px 45px rgba(197, 160, 42, 0.6); }
 
         /* --- News Ticker --- */
         .news-ticker {
             background: var(--card-white); height: 45px; display: flex; align-items: center; overflow: hidden;
-            margin: 20px 0; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 25px; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;
             box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
         .ticker-move { display: inline-block; white-space: nowrap; animation: ticker 40s linear infinite; }
@@ -68,14 +85,29 @@
         .tab-btn:hover { border-color: var(--gold-light); }
         .tab-btn.active { background: var(--gold-shine); color: var(--card-white); border-color: var(--gold-shine); box-shadow: 0 4px 10px rgba(197, 160, 42, 0.3); }
 
-        /* --- Menu Grid --- */
+        /* --- Menu Grid & Animations --- */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .menu-grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
-        .item { background: var(--card-white); border-radius: 25px; overflow: hidden; border: 1px solid #f1f5f9; transition: transform 0.3s, box-shadow 0.3s; display: flex; flex-direction: column;}
-        .item:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
-        .item img { width: 100%; height: 200px; object-fit: cover; }
+        .item { 
+            background: var(--card-white); border-radius: 25px; overflow: hidden; 
+            border: 1px solid #f1f5f9; transition: transform 0.3s, box-shadow 0.3s; 
+            display: flex; flex-direction: column;
+            animation: fadeInUp 0.5s ease-out forwards; /* دخول سينمائي للوجبات */
+        }
+        .item:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        
+        /* التأثير الانسيابي للصور */
+        .item-img-wrap { width: 100%; height: 210px; overflow: hidden; }
+        .item-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+        .item:hover .item-img-wrap img { transform: scale(1.1); } /* تكبير الصورة عند اللمس */
+
         .item-info { padding: 20px; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between;}
         .item h3 { font-size: 18px; color: var(--primary-navy); font-weight: 800; margin-bottom: 5px; }
-        .item p { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; line-height: 1.4; }
+        .item p { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; line-height: 1.5; }
         .price { font-weight: 900; color: var(--gold-shine); font-size: 20px; margin-bottom: 15px; }
         .add-btn { 
             background: var(--primary-navy); color: var(--card-white); border: none; width: 100%; padding: 12px; 
@@ -127,16 +159,15 @@
         .btn-clear { background: #ffe4e6; color: var(--danger-red); border: none; padding: 12px; border-radius: 15px; font-weight: 700; cursor: pointer; width: 100%; }
         
         .close-modal-icon { position: absolute; top: 20px; right: 20px; background: #e2e8f0; border: none; width: 35px; height: 35px; border-radius: 50%; font-weight: bold; cursor: pointer; color: var(--text-muted); }
-
-        /* Loader */
         .loader { text-align: center; padding: 50px; font-weight: bold; color: var(--primary-navy); }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <img src="logo.jpg" alt="شعار مطعم الريان" class="main-logo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\\\'http://www.w3.org/2000/svg\\\' width=\\\'130\\\' height=\\\'130\\\' style=\\\'background:%23ccc;border-radius:15px\\\'%3E%3Ctext x=\\\'50%25\\\' y=\\\'50%25\\\' dominant-baseline=\\\'middle\\\' text-anchor=\\\'middle\\\' fill=\\\'%23333\\\'%3Eبدون شعار%3C/text%3E%3C/svg%3E'">
         <h1>مطعم الريان للأطباق البحرية</h1>
+        <p class="subtitle">أصالة المذاق البحري</p>
+        <img src="logo.jpg" alt="شعار مطعم الريان" class="main-logo" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\\\'http://www.w3.org/2000/svg\\\' width=\\\'140\\\' height=\\\'140\\\' style=\\\'background:%23fff;border-radius:50%25\\\'%3E%3Ctext x=\\\'50%25\\\' y=\\\'50%25\\\' dominant-baseline=\\\'middle\\\' text-anchor=\\\'middle\\\' fill=\\\'%23c5a02a\\\' font-weight=\\\'bold\\\'%3Eالريان%3C/text%3E%3C/svg%3E'">
     </div>
 
     <div class="news-ticker">
@@ -171,10 +202,7 @@
             <div class="modal-header">
                 <h2>📦 مراجعة الطلب</h2>
             </div>
-            
-            <div class="cart-items-container" id="cart-items-list">
-                </div>
-
+            <div class="cart-items-container" id="cart-items-list"></div>
             <div class="modal-footer">
                 <div class="modal-total-row">
                     <span>الإجمالي النهائي:</span>
@@ -192,21 +220,17 @@
     </div>
 
     <script>
-        // --- Configuration ---
         const restaurantPhone = "967735168698"; 
         const STORAGE_KEY = 'rayyan_restaurant_cart';
         
-        // --- State ---
         let menuData = [];
         let cart = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
-        // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
             fetchMenu();
             updateCartUI();
         });
 
-        // --- Fetch Data ---
         async function fetchMenu() {
             try {
                 const response = await fetch('menu.json');
@@ -217,13 +241,11 @@
             } catch (error) {
                 document.getElementById('menu-container').innerHTML = `
                     <div style="text-align:center; padding: 40px; color: var(--danger-red); font-weight: bold;">
-                        ⚠️ عذراً، حدث خطأ في تحميل قائمة الطعام. يرجى التأكد من وجود ملف menu.json بجوار ملف index.html
+                        ⚠️ عذراً، تأكد من رفع ملف menu.json إلى GitHub بجوار ملف index.html
                     </div>`;
-                console.error("Error loading menu:", error);
             }
         }
 
-        // --- UI Rendering ---
         function renderTabs() {
             const nav = document.getElementById('tab-nav');
             nav.innerHTML = '';
@@ -246,12 +268,15 @@
             const grid = document.createElement('div');
             grid.className = 'menu-grid';
             
-            menuData[catIdx].items.forEach(item => {
-                // Ensure description exists
+            menuData[catIdx].items.forEach((item, index) => {
                 const descHtml = item.desc ? `<p>${item.desc}</p>` : '';
+                // إضافة تأخير بسيط لكل وجبة لعمل تأثير الدخول المتتابع المتدرج (Cascade)
+                const animationDelay = index * 0.05; 
                 grid.innerHTML += `
-                    <div class="item">
-                        <img src="${item.img}" alt="${item.name}" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\\\'http://www.w3.org/2000/svg\\\' width=\\\'260\\\' height=\\\'200\\\' style=\\\'background:%23f1f5f9;\\\'%3E%3Ctext x=\\\'50%25\\\' y=\\\'50%25\\\' dominant-baseline=\\\'middle\\\' text-anchor=\\\'middle\\\' fill=\\\'%2394a3b8\\\'%3Eصورة غير متوفرة%3C/text%3E%3C/svg%3E'">
+                    <div class="item" style="animation-delay: ${animationDelay}s;">
+                        <div class="item-img-wrap">
+                            <img src="${item.img}" alt="${item.name}" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\\\'http://www.w3.org/2000/svg\\\' width=\\\'260\\\' height=\\\'200\\\' style=\\\'background:%23f1f5f9;\\\'%3E%3Ctext x=\\\'50%25\\\' y=\\\'50%25\\\' dominant-baseline=\\\'middle\\\' text-anchor=\\\'middle\\\' fill=\\\'%2394a3b8\\\'%3Eصورة غير متوفرة%3C/text%3E%3C/svg%3E'">
+                        </div>
                         <div class="item-info">
                             <div>
                                 <h3>${item.name}</h3>
@@ -268,14 +293,10 @@
             container.appendChild(grid);
         }
 
-        // --- Cart Logic ---
         window.addToCart = function(id, name, price) {
             const existingItem = cart.find(i => i.id === id);
-            if (existingItem) {
-                existingItem.qty++;
-            } else {
-                cart.push({ id, name, price, qty: 1 });
-            }
+            if (existingItem) existingItem.qty++;
+            else cart.push({ id, name, price, qty: 1 });
             saveCart();
         };
 
@@ -283,15 +304,10 @@
             const itemIndex = cart.findIndex(i => i.id === id);
             if (itemIndex > -1) {
                 cart[itemIndex].qty += delta;
-                if (cart[itemIndex].qty <= 0) {
-                    cart.splice(itemIndex, 1);
-                }
+                if (cart[itemIndex].qty <= 0) cart.splice(itemIndex, 1);
                 saveCart();
-                renderCartModalItems(); // Refresh modal content directly
-                
-                if (cart.length === 0) {
-                    closeModal();
-                }
+                renderCartModalItems();
+                if (cart.length === 0) closeModal();
             }
         };
 
@@ -303,17 +319,10 @@
         function updateCartUI() {
             const count = cart.reduce((sum, item) => sum + item.qty, 0);
             const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-            
             document.getElementById('cart-count').innerText = count;
             document.getElementById('cart-total').innerText = total.toLocaleString();
             document.getElementById('modal-total').innerText = total.toLocaleString();
-
-            const cartBar = document.getElementById('cart-bar');
-            if (count > 0) {
-                cartBar.style.display = 'flex';
-            } else {
-                cartBar.style.display = 'none';
-            }
+            document.getElementById('cart-bar').style.display = count > 0 ? 'flex' : 'none';
         }
 
         function clearCart() {
@@ -324,17 +333,16 @@
             }
         }
 
-        // --- Modal Logic ---
         function openModal() {
             if (cart.length === 0) return alert("سلة الطلبات فارغة حالياً!");
             renderCartModalItems();
             document.getElementById('cart-modal').style.display = 'block';
-            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            document.body.style.overflow = 'hidden'; 
         }
 
         function closeModal() {
             document.getElementById('cart-modal').style.display = 'none';
-            document.body.style.overflow = 'auto'; // Restore background scrolling
+            document.body.style.overflow = 'auto'; 
         }
 
         function renderCartModalItems() {
@@ -360,7 +368,6 @@
             });
         }
 
-        // --- Checkout Logic ---
         function sendOrder() {
             const customerNameInput = document.getElementById('customer-name');
             const customerName = customerNameInput.value.trim();
@@ -376,14 +383,12 @@
             let message = `*🍽️ طلب جديد من مطعم الريان*%0A`;
             message += `*العميل:* ${customerName}%0A`;
             message += `---------------------------%0A`;
-            
             let total = 0;
             cart.forEach(item => {
                 const subtotal = item.price * item.qty;
                 message += `▪️ ${item.qty} × ${item.name} = ${subtotal.toLocaleString()} ر.ي%0A`;
                 total += subtotal;
             });
-            
             message += `---------------------------%0A`;
             message += `*💰 الإجمالي النهائي: ${total.toLocaleString()} ر.ي*%0A`;
             message += `الرجاء تأكيد استلام الطلب، شكراً لكم!`;
@@ -391,19 +396,15 @@
             window.open(`https://wa.me/${restaurantPhone}?text=${message}`, '_blank');
         }
 
-        // --- Event Listeners ---
         document.getElementById('cart-toggle').addEventListener('click', openModal);
         document.getElementById('main-checkout-btn').addEventListener('click', openModal);
         document.getElementById('close-modal-btn').addEventListener('click', closeModal);
         document.getElementById('whatsapp-send').addEventListener('click', sendOrder);
         document.getElementById('clear-cart').addEventListener('click', clearCart);
         
-        // Close modal when clicking outside of it
         window.onclick = function(event) {
             const modal = document.getElementById('cart-modal');
-            if (event.target == modal) {
-                closeModal();
-            }
+            if (event.target == modal) closeModal();
         }
     </script>
 </body>
